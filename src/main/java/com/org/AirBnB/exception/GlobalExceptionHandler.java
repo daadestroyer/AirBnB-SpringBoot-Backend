@@ -28,7 +28,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InventoryNotAvailableException.class)
     public ResponseEntity<APIResponse> handleInventoryNotAvailableException(InventoryNotAvailableException ex){
+        APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookingExpiredException.class)
+    public ResponseEntity<APIResponse> handleBookingExpiredException(BookingExpiredException ex){
         APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(BookingAtIllegalState.class)
+    public ResponseEntity<?> handleBookingAtIllegalState(BookingAtIllegalState ex){
+        APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+
 }

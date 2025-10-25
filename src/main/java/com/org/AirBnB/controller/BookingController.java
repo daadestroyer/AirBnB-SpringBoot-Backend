@@ -2,6 +2,7 @@ package com.org.AirBnB.controller;
 
 import com.org.AirBnB.dto.BookingDTO;
 import com.org.AirBnB.dto.BookingRequest;
+import com.org.AirBnB.dto.GuestDTO;
 import com.org.AirBnB.entities.enums.BookingStatus;
 import com.org.AirBnB.services.BookingService;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -31,5 +34,11 @@ public class BookingController {
     public ResponseEntity<?> deleteBooking(@PathVariable Long bookingId){
         String message = bookingService.deleteBooking(bookingId);
         return new ResponseEntity<>(message,HttpStatus.OK);
+    }
+
+    @PostMapping("/add-guest/{bookingId}")
+    public ResponseEntity<?> addGuest(@PathVariable Long bookingId, @RequestBody List<GuestDTO> guestDTOList){
+        BookingDTO bookingDTO = bookingService.addGuestToBooking(bookingId, guestDTOList);
+        return new ResponseEntity<>(bookingDTO,HttpStatus.OK);
     }
 }

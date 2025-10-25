@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 
@@ -42,12 +43,12 @@ public class Booking {
     private LocalDate checkOutDate;
 
     @CreationTimestamp
-    @Column(unique = false,columnDefinition = "DATE")
-    private LocalDate createdAt;
+    @Column(nullable = false,updatable = false)
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(columnDefinition = "DATE")
-    private LocalDate updatedAt;
+    @Column(nullable = false,updatable = false)
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
