@@ -40,6 +40,9 @@ public class Inventory {
     @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0 ")
     private Integer bookedCount;
 
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0 ")
+    private Integer reservedCount; // when user will hold some rooms but not did the payment
+
     @Column(nullable = false)
     private Integer totalCount;
 

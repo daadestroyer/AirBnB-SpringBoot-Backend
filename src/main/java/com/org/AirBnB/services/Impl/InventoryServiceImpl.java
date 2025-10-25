@@ -39,6 +39,7 @@ public class InventoryServiceImpl implements InventoryService {
                     .city(room.getHotel().getCity())
                     .date(LocalDate.from(today.atStartOfDay()))
                     .price(room.getBasePrice())
+                    .reservedCount(0)
                     .surgeFactor(BigDecimal.ONE)
                     .totalCount(room.getTotalCount())
                     .closed(false)
@@ -71,7 +72,7 @@ public class InventoryServiceImpl implements InventoryService {
          */
 
         // this is the way to calculate total days between checkInDate and checkOutDate
-        Long dateCount = (long) Math.toIntExact(ChronoUnit.DAYS.between(hotelSearchRequest.getCheckInDate(), hotelSearchRequest.getCheckOutDate()) + 1);
+        Long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getCheckInDate(), hotelSearchRequest.getCheckOutDate()) + 1;
 
 
         PageRequest pageRequest = PageRequest.of(hotelSearchRequest.getPageNumber(), hotelSearchRequest.getPageSize());

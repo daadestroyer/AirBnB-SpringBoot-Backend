@@ -25,4 +25,10 @@ public class GlobalExceptionHandler {
         APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InventoryNotAvailableException.class)
+    public ResponseEntity<APIResponse> handleInventoryNotAvailableException(InventoryNotAvailableException ex){
+        APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+    }
 }
