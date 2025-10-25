@@ -8,8 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
+import java.time.LocalDate;
 @Data
 @ToString
 @Builder
@@ -36,7 +35,7 @@ public class Inventory {
     private Room room;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0 ")
     private Integer bookedCount;
@@ -57,9 +56,11 @@ public class Inventory {
     private boolean closed;
 
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(columnDefinition = "DATE")
+    private LocalDate createdAt;
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(columnDefinition = "DATE")
+    private LocalDate updatedAt;
 
 
 }

@@ -5,7 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -26,9 +26,11 @@ public class Hotel {
     @Column(columnDefinition = "TEXT[]")
     private String[] amenities;
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    @Column(columnDefinition = "DATE")
+    private LocalDate createdAt;
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(columnDefinition = "DATE")
+    private LocalDate updatedAt;
     @Embedded
     private HotelContactInfo hotelContactInfo;
     @Column(nullable = false)

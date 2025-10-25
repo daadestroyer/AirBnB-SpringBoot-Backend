@@ -1,6 +1,7 @@
 package com.org.AirBnB.controller;
 
 import com.org.AirBnB.dto.HotelDTO;
+import com.org.AirBnB.dto.HotelInfoDTO;
 import com.org.AirBnB.services.HotelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class HotelController {
 
     @GetMapping("/{hotelId}")
     public ResponseEntity<?> getHotelById(@PathVariable Long hotelId) {
-        HotelDTO hotelById = hotelService.getHotelById(hotelId);
+        HotelInfoDTO hotelById = hotelService.getHotelById(hotelId);
         return new ResponseEntity<>(hotelById, HttpStatus.OK);
     }
 

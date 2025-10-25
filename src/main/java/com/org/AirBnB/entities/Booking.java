@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 
@@ -42,11 +41,12 @@ public class Booking {
     private LocalDate checkOutDate;
 
     @CreationTimestamp
-    @Column(unique = false)
-    private LocalDateTime createdAt;
+    @Column(unique = false,columnDefinition = "DATE")
+    private LocalDate createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(columnDefinition = "DATE")
+    private LocalDate updatedAt;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "paymentId")

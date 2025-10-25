@@ -9,7 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Data
 @AllArgsConstructor
@@ -43,11 +44,12 @@ public class Room {
     private Integer capacity;
 
     @CreationTimestamp
-    @Column(unique = false)
-    private LocalDateTime createdAt;
+    @Column(unique = false,columnDefinition = "DATE")
+    private LocalDate createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Column(columnDefinition = "DATE")
+    private LocalDate updatedAt;
 
     @Column(nullable = false)
     private boolean active;
