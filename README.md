@@ -7,5 +7,5 @@
 ### DFD of AirBnB
 ![img_3.png](img_3.png)
 
-### Flow of User Booking hotel
+### Flow of User Booking room
 ![img_5.png](img_5.png)
