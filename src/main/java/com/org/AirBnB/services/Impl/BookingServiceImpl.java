@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -127,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         // adding guest
-        for(GuestDTO guestDTO : guestDTOList){
+        for (GuestDTO guestDTO : guestDTOList) {
             // adding guest in guest table
             Guest guest = modelMapper.map(guestDTO, Guest.class);
 
@@ -144,7 +145,6 @@ public class BookingServiceImpl implements BookingService {
         booking = bookingRepository.save(booking);
 
 
-
         return modelMapper.map(booking, BookingDTO.class);
     }
 
@@ -152,5 +152,74 @@ public class BookingServiceImpl implements BookingService {
         // to check if booking is expired or not get the created date of booking and add three minutes to it
         // we are waiting for three minutes and holding the hotel
         return booking.getCreatedAt().plusMinutes(3).isBefore(LocalDateTime.now());
+    }
+
+    /**
+     * Runs every minute and releases reserved rooms for bookings that were RESERVED
+     * and created more than 3 minutes ago.
+     */
+    @Scheduled(fixedRate = 60_000) // every minute
+    @Transactional
+    public void releaseExpiredBookings() {
+        LocalDateTime threshold = LocalDateTime.now().minusMinutes(3);
+        log.debug("Running releaseExpiredBookings, threshold={}", threshold);
+
+        List<Booking> expiredBookings = bookingRepository.findByStatusAndCreatedBefore(BookingStatus.RESERVED, threshold);
+
+        if (expiredBookings.isEmpty()) {
+            log.debug("No expired bookings found.");
+            return;
+        }
+
+        for (Booking booking : expiredBookings) {
+            try {
+                releaseReservedInventory(booking);
+                booking.setBookingStatus(BookingStatus.EXPIRED);
+            } catch (Exception ex) {
+                // log and continue with other bookings to avoid blocking the whole job
+                log.error("Failed to release inventory for booking id={} : {}", booking.getBookingId(), ex.getMessage(), ex);
+            }
+        }
+
+        bookingRepository.saveAll(expiredBookings);
+        log.info("Released inventory and updated status to EXPIRED for {} bookings", expiredBookings.size());
+    }
+
+    /**
+     * Resets reservedCount to 0 for inventory entries belonging to the booking's room
+     * between checkIn and checkOut (inclusive).
+     */
+    private void releaseReservedInventory(Booking booking) {
+        if (booking == null) return;
+
+        if (booking.getRoom() == null || booking.getRoom().getRoomId() == null) {
+            log.warn("Booking id={} has no room information; skipping inventory release", booking.getBookingId());
+            return;
+        }
+        if (booking.getCheckInDate() == null || booking.getCheckOutDate() == null) {
+            log.warn("Booking id={} missing check-in/check-out dates; skipping inventory release", booking.getBookingId());
+            return;
+        }
+
+        Long roomId = booking.getRoom().getRoomId();
+        LocalDate checkIn = booking.getCheckInDate();
+        LocalDate checkOut = booking.getCheckOutDate();
+
+        List<Inventory> inventories = inventoryRepository.findByRoomIdAndDateBetween(roomId, checkIn, checkOut);
+        if (inventories.isEmpty()) {
+            log.debug("No inventory rows found for booking id={}, roomId={}, dateRange {} - {}", booking.getBookingId(), roomId, checkIn, checkOut);
+            return;
+        }
+
+        for (Inventory inv : inventories) {
+            // Option A: set reservedCount to 0 (requested)
+            // inv.setReservedCount(0);
+            // Option B (alternative): if you want to subtract the booking's reserved amount instead of zeroing,
+            // you could do:
+            inv.setReservedCount(Math.max(0, inv.getReservedCount() - booking.getRoomCount()));
+        }
+
+        inventoryRepository.saveAll(inventories);
+        log.debug("Released reserved inventory for booking id={}, updated {} inventory rows", booking.getBookingId(), inventories.size());
     }
 }
