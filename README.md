@@ -9,3 +9,15 @@
 
 ### Flow of User Booking room
 ![img_5.png](img_5.png)
+
+### Features
+1. Create hotels
+2. Activate Hotels, once activated then one year inventory get created
+3. De activate hotels
+3. Add rooms in the hotel
+4. Delete rooms, hotel,
+5. Dynamic Pricing of hotel based on urgency, holidays, occupancy, using Decorator Pattern and Scheduling
+4. Search Rooms based on city, number of rooms, check-in and checkout date
+6. Hotel Booking
+7. Stripe Payment Gateway for Payments and Refund and Receipt Generation
+8. Role based authentication and authorization

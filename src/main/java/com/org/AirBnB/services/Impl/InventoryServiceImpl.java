@@ -1,12 +1,13 @@
 package com.org.AirBnB.services.Impl;
 
-import com.org.AirBnB.dto.HotelDTO;
+import com.org.AirBnB.dto.HotelPriceDto;
 import com.org.AirBnB.dto.HotelSearchRequest;
-import com.org.AirBnB.entities.Hotel;
 import com.org.AirBnB.entities.Inventory;
 import com.org.AirBnB.entities.Room;
+import com.org.AirBnB.repository.HotelMinPriceRepository;
 import com.org.AirBnB.repository.InventoryRepository;
 import com.org.AirBnB.services.InventoryService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,12 +19,13 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 @Service
+@RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
     @Autowired
-    private InventoryRepository inventoryRepository;
+    private final InventoryRepository inventoryRepository;
     @Autowired
-    private ModelMapper modelMapper;
-
+    private final ModelMapper modelMapper;
+    private final HotelMinPriceRepository hotelMinPriceRepository;
 
     // Creating default inventory in advance for 1 year
     @Override
@@ -57,7 +59,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Page<HotelDTO> searchHotels(HotelSearchRequest hotelSearchRequest) {
+    public Page<HotelPriceDto> searchHotels(HotelSearchRequest hotelSearchRequest) {
         /*
             Criteria for search
             1. startDate <= date <= endDate
@@ -74,9 +76,9 @@ public class InventoryServiceImpl implements InventoryService {
         // this is the way to calculate total days between checkInDate and checkOutDate
         Long dateCount = ChronoUnit.DAYS.between(hotelSearchRequest.getCheckInDate(), hotelSearchRequest.getCheckOutDate()) + 1;
 
-
+        // for 90 days
         PageRequest pageRequest = PageRequest.of(hotelSearchRequest.getPageNumber(), hotelSearchRequest.getPageSize());
-        Page<Hotel> availableHotelsWithGivenParameters = inventoryRepository.findAvailableHotelsWithGivenParameters(
+        Page<HotelPriceDto> hotelPriceDtos = hotelMinPriceRepository.listAllMinPriceHotel(
                 hotelSearchRequest.getCity(),
                 hotelSearchRequest.getCheckInDate(),
                 hotelSearchRequest.getCheckOutDate(),
@@ -85,8 +87,6 @@ public class InventoryServiceImpl implements InventoryService {
                 pageRequest
         );
 
-        Page<HotelDTO> hotelDto = availableHotelsWithGivenParameters.map(hotel -> modelMapper.map(hotel, HotelDTO.class));
-
-        return hotelDto;
+        return hotelPriceDtos;
     }
 }

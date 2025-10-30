@@ -1,6 +1,7 @@
 package com.org.AirBnB.controller;
 
 import com.org.AirBnB.dto.HotelDTO;
+import com.org.AirBnB.dto.HotelPriceDto;
 import com.org.AirBnB.dto.HotelSearchRequest;
 import com.org.AirBnB.services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,7 @@ public class HotelBrowseController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchHotel(@RequestBody HotelSearchRequest hotelSearchRequest) {
-        Page<HotelDTO> hotelDTOS = inventoryService.searchHotels(hotelSearchRequest);
-
-        return new ResponseEntity<>(hotelDTOS, HttpStatus.OK);
+        Page<HotelPriceDto> hotelPriceDtos = inventoryService.searchHotels(hotelSearchRequest);
+        return new ResponseEntity<>(hotelPriceDtos, HttpStatus.OK);
     }
 }

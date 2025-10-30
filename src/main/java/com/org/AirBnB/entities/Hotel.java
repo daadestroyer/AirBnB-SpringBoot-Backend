@@ -1,5 +1,6 @@
 package com.org.AirBnB.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -36,6 +37,7 @@ public class Hotel {
     @Column(nullable = false)
     private Boolean active;
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Room> rooms;
     @ManyToOne
     @JoinColumn(name = "hotel_owner_id")
