@@ -1,6 +1,5 @@
 package com.org.AirBnB.controller;
 
-import com.org.AirBnB.dto.HotelDTO;
 import com.org.AirBnB.dto.RoomDTO;
 import com.org.AirBnB.services.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/rooms")
-public class RoomController {
+public class AdminRoomController {
     @Autowired
     private RoomService roomService;
 

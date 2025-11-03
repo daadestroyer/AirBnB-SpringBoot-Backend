@@ -6,9 +6,9 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class UserDTO {
-    private Long userId;
+public class SignUpDto {
     private String email;
+    private String password;
     private String name;
     private Set<Role> roles;
 }
