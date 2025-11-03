@@ -1,4 +1,4 @@
-package com.org.AirBnB.exception;
+package com.org.AirBnB.exception.customexceptions;
 
 public class InventoryNotAvailableException extends RuntimeException{
     public InventoryNotAvailableException(String message) {

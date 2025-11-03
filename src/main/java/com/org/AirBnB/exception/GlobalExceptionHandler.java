@@ -1,5 +1,6 @@
 package com.org.AirBnB.exception;
 
+import com.org.AirBnB.exception.customexceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +43,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleBookingAtIllegalState(BookingAtIllegalState ex){
         APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<?> handleUnAuthorizedException(UnAuthorizedException ex){
+        APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(apiResponse, HttpStatus.UNAUTHORIZED);
     }
 
 }

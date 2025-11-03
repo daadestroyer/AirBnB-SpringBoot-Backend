@@ -5,21 +5,18 @@ import com.org.AirBnB.dto.BookingRequest;
 import com.org.AirBnB.dto.GuestDTO;
 import com.org.AirBnB.entities.*;
 import com.org.AirBnB.entities.enums.BookingStatus;
-import com.org.AirBnB.exception.BookingAtIllegalState;
-import com.org.AirBnB.exception.BookingExpiredException;
-import com.org.AirBnB.exception.InventoryNotAvailableException;
-import com.org.AirBnB.exception.ResourceNotFoundException;
+import com.org.AirBnB.exception.customexceptions.*;
 import com.org.AirBnB.repository.BookingRepository;
 import com.org.AirBnB.repository.HotelRepository;
 import com.org.AirBnB.repository.InventoryRepository;
 import com.org.AirBnB.repository.RoomRepository;
 import com.org.AirBnB.services.BookingService;
-import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -84,8 +81,8 @@ public class BookingServiceImpl implements BookingService {
 
         // 6. Create the booking
 
-        // TODO : Remove dummy user
-        User user = User.builder().userId(101L).build();
+
+        User user = getLoggedInUser();
 
         // TODO : calculate dynamic price
         BigDecimal amount = BigDecimal.TEN;
@@ -127,6 +124,11 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingAtIllegalState("Booking is not under reserved state, can not add guest");
         }
 
+        // check if this booking belong to the user or not who is going to add guest in his booking
+        User loggedInUser = getLoggedInUser();
+        if (!loggedInUser.equals(booking.getUser())) {
+            throw new UnAuthorizedException("Booking " + bookingId + " does not belong to this user " + loggedInUser.getUsername());
+        }
         // adding guest
         for (GuestDTO guestDTO : guestDTOList) {
             // adding guest in guest table
@@ -134,8 +136,7 @@ public class BookingServiceImpl implements BookingService {
 
             // TODO : Remove dummy user
             // to add guest we need to add user for which guest belongs
-            User user = User.builder().userId(101L).build();
-            guest.setUser(user);
+            guest.setUser(loggedInUser);
             guest = guestRepository.save(guest);
 
             booking.getGuestList().add(guest);
@@ -146,6 +147,10 @@ public class BookingServiceImpl implements BookingService {
 
 
         return modelMapper.map(booking, BookingDTO.class);
+    }
+
+    public User getLoggedInUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public boolean isBookingExpired(Booking booking) {
