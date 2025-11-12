@@ -92,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
 
 
         User user = getLoggedInUser();
-
+        // calculate dynamic price
         BigDecimal priceForOneRoom = pricingService.calculateTotalPrice(lockedAvailableInventory);
         log.info("Price for one room is {}",priceForOneRoom);
         BigDecimal totalPrice = priceForOneRoom.multiply(BigDecimal.valueOf(bookingRequest.getRoomsCount()));
@@ -343,5 +343,17 @@ public class BookingServiceImpl implements BookingService {
         } catch (StripeException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public BookingStatus getBookingStatus(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(
+                () -> new ResourceNotFoundException("Booking not found with id: "+bookingId)
+        );
+        User user = getLoggedInUser();
+        if (!user.equals(booking.getUser())) {
+            throw new UnAuthorizedException("Booking does not belong to this user with id: "+user.getUserId());
+        }
+        return booking.getBookingStatus();
     }
 }

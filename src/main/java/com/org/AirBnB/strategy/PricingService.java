@@ -17,14 +17,14 @@ public class PricingService {
         pricingStrategy = new UrgencyPricingDecorator(pricingStrategy);
         pricingStrategy = new HolidayPricingDecorator(pricingStrategy);
 
-
-
         return pricingStrategy.calculatePrice(inventory);
 
     }
+
+    // Calculating dynamic pricing for each day inventory
     public BigDecimal calculateTotalPrice(List<Inventory> inventoryList) {
         return inventoryList.stream()
-                .map(this::calculateDynamicPricing)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(inventory -> calculateDynamicPricing(inventory))
+                .reduce(BigDecimal.ZERO, (a, b) -> a.add(b));
     }
 }

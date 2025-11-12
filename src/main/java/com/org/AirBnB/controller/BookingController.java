@@ -2,6 +2,7 @@ package com.org.AirBnB.controller;
 
 import com.org.AirBnB.dto.BookingDTO;
 import com.org.AirBnB.dto.BookingRequest;
+import com.org.AirBnB.dto.BookingStatusResponseDto;
 import com.org.AirBnB.dto.GuestDTO;
 import com.org.AirBnB.entities.enums.BookingStatus;
 import com.org.AirBnB.services.BookingService;
@@ -58,9 +59,9 @@ public class BookingController {
         return new ResponseEntity<>(message,HttpStatus.OK);
     }
 
-//    @GetMapping("/{bookingId}/status")
-//    @Operation(summary = "Check the status of the booking", tags = {"Booking Flow"})
-//    public ResponseEntity<BookingStatusResponseDto> getBookingStatus(@PathVariable Long bookingId) {
-//        return ResponseEntity.ok(new BookingStatusResponseDto(bookingService.getBookingStatus(bookingId)));
-//    }
+    @GetMapping("/{bookingId}/status")
+    @Operation(summary = "Check the status of the booking", tags = {"Booking Flow"})
+    public ResponseEntity<BookingStatusResponseDto> getBookingStatus(@PathVariable Long bookingId) {
+        return ResponseEntity.ok(new BookingStatusResponseDto(bookingService.getBookingStatus(bookingId)));
+    }
 }
