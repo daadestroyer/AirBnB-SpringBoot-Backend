@@ -17,8 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class GuestDTO {
     private Long guestId;
-    private User user;
     private String guestName;
-    private Gender gender;
+    private String gender;
     private Integer age;
 }

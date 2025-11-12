@@ -41,6 +41,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+        String path = request.getRequestURI();
+        if (path != null && path.startsWith("/api/v1/webhook")) {
+            log.debug("Skipping JWT filter for webhook path: {}", path);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         log.info("JWT Filter loaded");
         // extract the token

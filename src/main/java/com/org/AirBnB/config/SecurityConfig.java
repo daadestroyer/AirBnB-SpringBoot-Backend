@@ -32,35 +32,48 @@ public class SecurityConfig {
             "/hotels/**"
     };
 
-    // WORKING WITH DIFFERENT ROLES
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // if you store JWT in cookies, re-evaluate CSRF
+                // keep CSRF disabled for APIs (you already disabled it previously)
+                .csrf(AbstractHttpConfigurer::disable)
 
-                // allow session only when needed (OAuth2 needs it)
+                // stateless session management for JWT-based APIs
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                // Allow unauthenticated POSTs to the stripe webhook endpoint
                 .authorizeHttpRequests(auth -> auth
+                        // public application endpoints
                         .requestMatchers(publicRoutes).permitAll()
-                        .requestMatchers( "/admin/**").hasAnyRole("HOTEL_MANAGER","ADMIN")
-                        .requestMatchers("/booking/**").hasAnyRole("USER", "ADMIN")
+                        // allow Stripe webhooks (server-to-server) without auth
+                        .requestMatchers("/api/v1/webhook/**").permitAll()
+                        .requestMatchers("/webhook/**").permitAll()
+                        // role-based routes
+                        .requestMatchers("/admin/**").hasAnyRole("HOTEL_MANAGER", "ADMIN")
+                        .requestMatchers("/booking/**").hasAnyRole("GUEST", "ADMIN")
+                        // everything else requires authentication
                         .anyRequest().authenticated()
                 );
 
+        // add JWT filter after we've declared the permitAll for webhook;
+        // the filter should itself skip webhook URIs (see note below)
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncode(){
+    public BCryptPasswordEncoder passwordEncode() {
         return new BCryptPasswordEncoder();
     }
 }

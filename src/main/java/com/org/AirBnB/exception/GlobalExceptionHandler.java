@@ -78,4 +78,9 @@ public class GlobalExceptionHandler {
         APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<?> handleIllegalStateException(IllegalStateException ex){
+        APIResponse apiResponse = new APIResponse(ex.getMessage(), HttpStatus.OK);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }

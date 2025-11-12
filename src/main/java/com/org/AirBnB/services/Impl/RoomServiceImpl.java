@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,7 @@ public class RoomServiceImpl implements RoomService {
             throw new HotelNotActiveException("Before creating room in hotel "+hotelId+" activate the hotel first");
         }
         Room room = modelMapper.map(roomDTO, Room.class);
+        room.setBasePrice(BigDecimal.valueOf(1250.00));
         room.setHotel(hotel);
         Room savedRoom = roomRepository.save(room);
 

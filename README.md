@@ -21,3 +21,14 @@
 6. Hotel Booking
 7. Stripe Payment Gateway for Payments and Refund and Receipt Generation
 8. Role based authentication and authorization
+
+## Docker command for PostGres
+```
+docker run -d \
+--name my-postgres \
+-e POSTGRES_USER=postgres \
+-e POSTGRES_PASSWORD=postgres \
+-e POSTGRES_DB=airbnb \
+-p 5432:5432 \
+postgres:latest
+```
