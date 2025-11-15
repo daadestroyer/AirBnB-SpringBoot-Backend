@@ -40,7 +40,7 @@ public class HotelServiceImpl implements HotelService {
         log.info("Creating new hotel {} :", hotelDTO.getName());
         Hotel hotel = modelMapper.map(hotelDTO, Hotel.class);
         hotel.setActive(false);
-        User hotelOwner = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User hotelOwner = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         hotel.setHotelOwner(hotelOwner);
         Hotel savedHotel = hotelRepository.save(hotel);
         log.info("Created new hotel {} with ID {} :", hotelDTO.getName(), hotel.getHotelId());
@@ -59,18 +59,18 @@ public class HotelServiceImpl implements HotelService {
         HotelInfoDTO hotelInfoDTO = new HotelInfoDTO(hotelDTO, roomListDTO);
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!user.equals(hotel.getHotelOwner())){
-            throw new UnAuthorizedException("You does not own this hotel "+hotelId);
+        if (!user.equals(hotel.getHotelOwner())) {
+            throw new UnAuthorizedException("You does not own this hotel " + hotelId);
         }
         return hotelInfoDTO;
     }
 
     @Override
     public List<HotelDTO> getAllHotel() {
-        List<Hotel> allHotels = hotelRepository.findAll();
-        return allHotels
-                .stream()
-                .map(hotel -> modelMapper.map(hotel, HotelDTO.class)).collect(Collectors.toList());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Hotel> hotels = hotelRepository.findByHotelOwner(user);
+        return hotels.stream().map((element) -> modelMapper.map(element, HotelDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -81,8 +81,8 @@ public class HotelServiceImpl implements HotelService {
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel with not found with ID " + hotelId));
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!user.equals(hotel.getHotelOwner())){
-            throw new UnAuthorizedException("You does not own this hotel "+hotelId);
+        if (!user.equals(hotel.getHotelOwner())) {
+            throw new UnAuthorizedException("You does not own this hotel " + hotelId);
         }
         // copy properties from DTO into the existing entity
         modelMapper.map(hotelDto, Hotel.class);
@@ -106,10 +106,10 @@ public class HotelServiceImpl implements HotelService {
 
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!user.equals(hotel.getHotelOwner())){
-            throw new UnAuthorizedException("You does not own this hotel "+hotelId);
+        if (!user.equals(hotel.getHotelOwner())) {
+            throw new UnAuthorizedException("You does not own this hotel " + hotelId);
         }
-        for(Room room : hotel.getRooms()){
+        for (Room room : hotel.getRooms()) {
             // delete all future inventories for this particular hotel
             inventoryService.deleteAllInventory(room);
 
@@ -130,8 +130,8 @@ public class HotelServiceImpl implements HotelService {
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel with not found with ID " + hotelId));
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(!user.equals(hotel.getHotelOwner())){
-            throw new UnAuthorizedException("You does not own this hotel "+hotelId);
+        if (!user.equals(hotel.getHotelOwner())) {
+            throw new UnAuthorizedException("You does not own this hotel " + hotelId);
         }
 
         hotel.setActive(true);
@@ -151,8 +151,8 @@ public class HotelServiceImpl implements HotelService {
         hotel.setActive(false);
 
         List<Room> rooms = hotel.getRooms();
-        if(!rooms.isEmpty()){
-            for(Room room : hotel.getRooms()){
+        if (!rooms.isEmpty()) {
+            for (Room room : hotel.getRooms()) {
                 inventoryService.deleteAllInventory(room);
             }
         }

@@ -19,8 +19,9 @@
 5. Dynamic Pricing of hotel based on urgency, holidays, occupancy, using Decorator Pattern and Scheduling
 4. Search Rooms based on city, number of rooms, check-in and checkout date
 6. Hotel Booking
-7. Stripe Payment Gateway for Payments and Refund and Receipt Generation
-8. Role based authentication and authorization
+7. Role based authentication and authorization
+8. Stripe Payment Gateway for Payments and Refund Module
+9. Get status of booking api
 
 ## Docker command for PostGres
 ```

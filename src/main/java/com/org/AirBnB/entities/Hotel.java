@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -36,6 +35,10 @@ public class Hotel {
     private HotelContactInfo hotelContactInfo;
     @Column(nullable = false)
     private Boolean active;
+
+    // Prevent Lombok toString/equals/hashCode from traversing rooms -> hotel -> rooms...
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Room> rooms;

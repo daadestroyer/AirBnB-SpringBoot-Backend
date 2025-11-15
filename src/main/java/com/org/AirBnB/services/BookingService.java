@@ -3,11 +3,13 @@ package com.org.AirBnB.services;
 import com.org.AirBnB.dto.BookingDTO;
 import com.org.AirBnB.dto.BookingRequest;
 import com.org.AirBnB.dto.GuestDTO;
+import com.org.AirBnB.dto.HotelReportDto;
 import com.org.AirBnB.entities.enums.BookingStatus;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface BookingService {
@@ -26,4 +28,8 @@ public interface BookingService {
     String cancelBooking(Long bookingId);
 
     BookingStatus getBookingStatus(Long bookingId);
+
+    List<BookingDTO> getAllBookingsByHotelId(Long hotelId);
+
+    HotelReportDto getHotelReport(Long hotelId, LocalDate startDate, LocalDate endDate);
 }

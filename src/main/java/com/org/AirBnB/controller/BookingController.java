@@ -10,6 +10,7 @@ import com.stripe.exception.StripeException;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +22,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/booking")
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class BookingController {
 
-    @Autowired
-    private BookingService bookingService;
+    private final BookingService bookingService;
 
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest){
